@@ -1,10 +1,18 @@
 import datetime
 from collections import OrderedDict
-cache = None
+
+# cache = None
 
 
 def lru_cache(_func=None, *, cached=False, max_size=128):
-    global cache
+    """
+    This is a decorator which cache function, func arguments and func results.
+    It cache function by Least recently used cache replacement policy.
+    You can set max_size, can unset, cached parameter including.
+    I made a global cache variable to check the cache. You can import pprint and uncomment #cache and
+    #global cache and see what`s inside
+    """
+    # global cache
     cache = OrderedDict()
 
     def wrapper(func):
@@ -31,6 +39,6 @@ def timeit(func):
         start = datetime.datetime.now()
         result = func(*args)
         end = datetime.datetime.now()
-        print("Время выполнения: " + str(end - start))
+        print("Lead time: " + str(end - start))
         return result
     return wrapper
