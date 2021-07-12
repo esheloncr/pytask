@@ -51,10 +51,25 @@ def generate_data_4():
     return a
 
 
+def generate_data_5():
+    arr = []
+    for i in range(1000):
+        arr.append(i)
+    return arr
+
+
 data = generate_data()
 data2 = generate_data_2()
 data3 = generate_data_3()
 data4 = generate_data_4()
+data5 = generate_data_5()
+
+
+def test_one_parameter():
+    arr = []
+    for i in srange(1000):
+        arr.append(i)
+    assert arr == data5
 
 
 @mark.parametrize("a, b, result", data)

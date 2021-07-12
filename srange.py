@@ -10,6 +10,7 @@ class srange:
             self.start = 0
 
     def __len__(self):
+        self.arr = [i for i in self]
         return len(self.arr)
 
     def __getitem__(self, item):
