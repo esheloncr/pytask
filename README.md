@@ -1,4 +1,4 @@
-This is pure-python realisation of python range() built-in class and realize cache decorator.
+This is pure-python realization of python range() built-in class and realize cache decorator.
 For activate it:
 1. Clone the repository
 2. In terminal open folder with repository
