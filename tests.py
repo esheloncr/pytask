@@ -1,6 +1,7 @@
 from srange import srange
 from pytest import mark
 from random import randint, choice
+from func_utils import cache
 
 
 def generate_step():
@@ -109,3 +110,30 @@ def test_index():
         b = range(1000).index(random_int)
         c = srange(1000).index(random_int)
         assert c == b
+
+
+test_data_for_cache_function = [
+    [5, 7, 12],
+    [1, 20, 21],
+    [12, 20, 32],
+    [49, 21, 70],
+    [333, 333, 666],
+]
+
+
+@mark.parametrize("a, b, result", test_data_for_cache_function)
+def test_cache_function_result(a, b, result):
+    @cache(use_cache=True)
+    def improvised_sum(a, b):
+        return a + b
+
+    res = improvised_sum(a, b)
+    assert res == result
+    assert res in improvised_sum.cached_function.values()
+
+
+def test_cache_function_name():
+    @cache(use_cache=True)
+    def improvised_name():
+        return
+    assert improvised_name.__name__ == "improvised_name"

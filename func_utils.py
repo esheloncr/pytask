@@ -1,41 +1,48 @@
 import datetime
-from collections import OrderedDict
+from functools import update_wrapper
+from typing import Callable, Any
 
-# cache = None
 
-
-def lru_cache(_func=None, *, cached=False, max_size=128):
+def cache(use_cache=True) -> Callable:
     """
-    This is a decorator which cache function, func arguments and func results.
-    It cache function by Least recently used cache replacement policy.
-    You can set max_size, can unset, cached parameter including.
-    I made a global cache variable to check the cache. You can import pprint and uncomment #cache and
-    #global cache and see what`s inside
+    Improvised cache function that caches a result of functions and their arguments
+    @param use_cache: flag to use cache
+    @type use_cache: bool
+    @return: wrapped function
     """
-    # global cache
-    cache = OrderedDict()
+    def decorated_function(func: Callable) -> Callable:
+        wrapper = _cache(func, use_cache)
+        return update_wrapper(wrapper, func)
+    return decorated_function
 
-    def wrapper(func):
-        if not cached:
-            return func
 
-        def inner_wrapper(*args):
-            if len(cache) == max_size:
-                last_updated = list(cache.keys())[0]
-                del cache[last_updated]
-            func_data = (func, args)
-            if func_data in cache:
-                return
-            cache[func_data] = func(*args)
-            cache.move_to_end(func_data)
-        return inner_wrapper
-    if _func:
-        return wrapper(_func)
+def _cache(func: Callable, use_cache=True) -> Callable:
+    """
+    Internal function that hash function arguments and check it into cached_args list.
+    If them not in list func result will be calculated and append into cached_function dictionary where
+    key is arguments hash and value is result of function
+    @param func: users wrapped function
+    @param use_cache: parameter sent from previous function
+    @return: wrapped function
+    """
+    cached_function = {}
+    cached_args = []
+
+    def wrapper(*args, **kwargs) -> Any:
+        arguments = hash(frozenset([*args, frozenset(kwargs)]))
+        if arguments in cached_args and use_cache:
+            return cached_function[arguments]
+        result = func(*args, **kwargs)
+        cached_function[arguments] = result
+        cached_args.append(arguments)
+        return result
+
+    wrapper.cached_function = cached_function
     return wrapper
 
 
-def timeit(func):
-    def wrapper(*args):
+def timeit(func: Callable) -> Callable:
+    def wrapper(*args) -> Any:
         start = datetime.datetime.now()
         result = func(*args)
         end = datetime.datetime.now()
