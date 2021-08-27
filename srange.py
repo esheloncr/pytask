@@ -43,8 +43,8 @@ class srange:
     def __repr__(self):
         if self.stop:
             if self.step > 1:
-                return "srange({}, {}, {})".format(self.start, self.stop, self.step)
-        return "srange({}, {})".format(self.start, self.stop)
+                return f"srange({self.start}, {self.stop}, {self.step})"
+        return f"srange({self.start}, {self.stop})"
 
     def index(self, value):
         """
@@ -58,7 +58,7 @@ class srange:
                 return counter
             start += self.step
             counter += 1
-        raise IndexError("{} not in srange".format(value))
+        raise IndexError(f"{value} not in srange")
 
     def count(self, value):
         """

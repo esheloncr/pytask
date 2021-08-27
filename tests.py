@@ -1,116 +1,6 @@
 from srange import srange
 from pytest import mark
-from random import randint, choice
 from func_utils import cache
-
-
-def generate_step():
-    a = randint(1, 25)
-    return a
-
-
-def generate_data():
-    a = [[randint(-1000, 0), randint(0, 1000)] for i in range(100)]  # range(100) - count of tests
-    j = None
-    for i in range(len(a)):
-        c, b = a[i]
-        for j in range(c, b):
-            pass
-        a[i].append(j)
-    return a
-
-
-def generate_data_2():
-    a = [[randint(-1000, 0), randint(0, 1000), generate_step()] for i in range(100)]
-    j = None
-    for i in range(len(a)):
-        b, c, d = a[i]
-        for j in range(b, c, d):
-            pass
-        a[i].append(j)
-    return a
-
-
-def generate_data_3():
-    a = [[randint(500, 1000), randint(0, 500), generate_step()] for i in range(100)]
-    j = None
-    for i in range(len(a)):
-        b, c, d = a[i]
-        for j in range(b, c, d):
-            pass
-        a[i].append(j)
-    return a
-
-
-def generate_data_4():
-    a = [[randint(0, 1000), randint(0, 1000)] for i in range(200)]
-    j = None
-    for i in range(len(a)):
-        b, c = a[i]
-        d = range(b).count(c)
-        a[i].append(d)
-    return a
-
-
-def generate_data_5():
-    arr = []
-    for i in range(1000):
-        arr.append(i)
-    return arr
-
-
-data = generate_data()
-data2 = generate_data_2()
-data3 = generate_data_3()
-data4 = generate_data_4()
-data5 = generate_data_5()
-
-
-def test_one_parameter():
-    arr = []
-    for i in srange(1000):
-        arr.append(i)
-    assert arr == data5
-
-
-@mark.parametrize("a, b, result", data)
-def test_two_params(a, b, result):
-    i = None
-    for i in srange(a, b):
-        pass
-    assert i == result
-
-
-@mark.parametrize("a, b, c, result", data2)
-def test_positive_step(a, b, c, result):
-    i = None
-    for i in srange(a, b, c):
-        pass
-    assert i == result
-
-
-@mark.parametrize("a, b, c, result", data3)
-def test_negative_step(a, b, c, result):
-    i = None
-    for i in srange(a, b, c):
-        pass
-    assert i == result
-
-
-@mark.parametrize("a, b, result", data4)
-def test_count(a, b, result):
-    value = srange(a).count(b)
-    assert value == result
-
-
-def test_index():
-    a = [i for i in range(1000)]
-    for i in srange(1000):
-        random_int = choice(a)
-        b = range(1000).index(random_int)
-        c = srange(1000).index(random_int)
-        assert c == b
-
 
 test_data_for_cache_function = [
     [5, 7, 12],
@@ -137,3 +27,53 @@ def test_cache_function_name():
     def improvised_name():
         return
     assert improvised_name.__name__ == "improvised_name"
+
+
+data_for_srange = [
+    [50, 50],
+    [90, 90],
+    [-20, 0],
+    [110, 110],
+    [-999, 0],
+]
+
+
+@mark.parametrize("a, result", data_for_srange)
+def test_srange_len_result(a, result):
+    test = srange(a)
+    assert len(test) == result
+
+
+data_for_count_test = [
+    [20, 40, 22, 1],
+    [1, 999, 1001, 0],
+    [-50, 2, 1, 1],
+    [20, -15, 0, 0],
+    [200, 332, 333, 0],
+]
+
+
+@mark.parametrize("a, b, value, result", data_for_count_test)
+def test_srange_count(a, b, value, result):
+    test = srange(a, b)
+    test_value = test.count(value)
+    assert test_value == result
+
+
+data_for_index_test = [
+    [20, 50, 24, 4],
+    [0, 100, 50, 50],
+    [32, 33, 32, 0],
+    [0, 20, 0, 0],
+    [100, 222, 222, 122],
+]
+
+
+@mark.parametrize("a, b, value, result", data_for_index_test)
+def test_srange_index(a, b, value, result):
+    test = srange(a, b)
+    try:
+        test_index = test.index(value)
+        assert test_index == result
+    except Exception as e:
+        assert e.__class__ == IndexError
